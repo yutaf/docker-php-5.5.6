@@ -71,31 +71,36 @@ RUN \
     --with-config-file-path=/srv/php/etc \
     --with-config-file-scan-dir=/srv/php/etc/php.d \
     --with-apxs2=/opt/apache2.2.26/bin/apxs \
-    --with-libdir=lib64 \
+# From live server configuration
     --enable-mbstring \
-    --enable-intl \
-    --with-icu-dir=/usr \
-    --with-gettext=/usr \
-    --with-pcre-regex=/usr \
-    --with-pcre-dir=/usr \
-    --with-readline=/usr \
-    --with-libxml-dir=/usr/bin/xml2-config \
+    --enable-mbregex \
     --with-mysql=mysqlnd \
     --with-mysqli=mysqlnd \
     --with-pdo-mysql=mysqlnd \
     --with-zlib=/usr \
-    --with-zlib-dir=/usr \
-    --with-gd \
-    --with-jpeg-dir=/usr \
-    --with-png-dir=/usr \
-    --with-freetype-dir=/usr \
-    --enable-gd-native-ttf \
-    --enable-gd-jis-conv \
+    --with-curl \
+    --enable-soap \
+    --with-xmlrpc \
     --with-openssl=/usr \
     --with-mcrypt=/usr \
-    --enable-bcmath \
-    --with-curl \
-    --enable-exif && \
+    --with-gd && \
+# Mine
+#    --with-libdir=lib64 \
+#    --enable-intl \
+#    --with-icu-dir=/usr \
+#    --with-gettext=/usr \
+#    --with-pcre-regex=/usr \
+#    --with-pcre-dir=/usr \
+#    --with-readline=/usr \
+#    --with-libxml-dir=/usr/bin/xml2-config \
+#    --with-zlib-dir=/usr \
+#    --with-jpeg-dir=/usr \
+#    --with-png-dir=/usr \
+#    --with-freetype-dir=/usr \
+#    --enable-gd-native-ttf \
+#    --enable-gd-jis-conv \
+#    --enable-bcmath \
+#    --enable-exif && \
   make && \
   make install && \
   cd && \
