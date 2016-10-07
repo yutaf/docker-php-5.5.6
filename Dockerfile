@@ -1,10 +1,10 @@
 # tag: yutaf/php-5.5.6
-FROM centos:6.3
+FROM centos:6.6
 MAINTAINER yutaf <yutafuji2008@gmail.com>
 
 # yum repos
 # epel; need for libcurl-devel
-#RUN yum localinstall http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm -y
+RUN yum localinstall http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm -y
 # mysql
 #RUN yum localinstall https://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm -y
 # ius
@@ -12,7 +12,7 @@ MAINTAINER yutaf <yutafuji2008@gmail.com>
 
 RUN yum update -y
 #RUN yum install -y --enablerepo=epel,mysql56-community,ius \
-RUN yum install -y  \
+RUN yum install -y --enablerepo=epel \
 # commands
   git \
 # Apache, php \
@@ -68,9 +68,11 @@ RUN \
   cd php-5.5.6 && \
   ./configure \
     --prefix=/opt/php-5.5.6 \
-    --with-config-file-path=/srv/php/etc \
-    --with-config-file-scan-dir=/srv/php/etc/php.d \
+    --with-config-file-path=/srv/etc \
+    --with-config-file-scan-dir=/srv/etc/php.d \
     --with-apxs2=/opt/apache2.2.26/bin/apxs \
+# This line is necessary for build
+    --with-libdir=lib64 \
 # From live server configuration
     --enable-mbstring \
     --enable-mbregex \
@@ -85,7 +87,6 @@ RUN \
     --with-mcrypt=/usr \
     --with-gd && \
 # Mine
-#    --with-libdir=lib64 \
 #    --enable-intl \
 #    --with-icu-dir=/usr \
 #    --with-gettext=/usr \
@@ -106,6 +107,9 @@ RUN \
   cd && \
   rm -r /usr/local/src/php-5.5.6
 
+# Set php PATH to use phpize command
+ENV PATH /opt/php-5.5.6/bin:$PATH
+
 # xdebug
 RUN \
   mkdir -p /usr/local/src/xdebug && \
@@ -123,52 +127,40 @@ RUN \
 #
 # Edit config files
 #
-
-COPY templates/apache.conf /etc/httpd/conf.d/apache.conf
+COPY templates/apache.conf /srv/etc/apache.conf
+COPY templates/php.ini /srv/etc/php.ini
+# Apache
 RUN \
-# Apache config
-  sed -i 's/^Listen 80/#&/' /etc/httpd/conf/httpd.conf && \
-  sed -i 's/^DocumentRoot/#&/' /etc/httpd/conf/httpd.conf && \
-  sed -i '/^<Directory/,/^<\/Directory/s/^/#/' /etc/httpd/conf/httpd.conf && \
-  sed -i 's;ScriptAlias /cgi-bin;#&;' /etc/httpd/conf/httpd.conf && \
-  mkdir -p -m 777 /var/www/html/log/ && \
-  sed -i 's;^CustomLog .*;CustomLog "|/usr/sbin/rotatelogs /var/www/html/log/access.%Y%m%d.log 86400 540" combined;' /etc/httpd/conf/httpd.conf && \
-  sed -i 's;^ErrorLog .*;ErrorLog "|/usr/sbin/rotatelogs /var/www/html/log/error.%Y%m%d.log 86400 540";' /etc/httpd/conf/httpd.conf && \
-  sed -i 's;^ServerTokens .*;ServerTokens Prod;' /etc/httpd/conf/httpd.conf && \
+  sed -i "s/^Listen 80/#&/" /opt/apache2.2.26/conf/httpd.conf && \
+  sed -i "s/^DocumentRoot/#&/" /opt/apache2.2.26/conf/httpd.conf && \
+  sed -i "/^<Directory/,/^<\/Directory/s/^/#/" /opt/apache2.2.26/conf/httpd.conf && \
+  sed -i "s;ScriptAlias /cgi-bin;#&;" /opt/apache2.2.26/conf/httpd.conf && \
+  sed -i "s;#\(Include conf/extra/httpd-mpm.conf\);\1;" /opt/apache2.2.26/conf/httpd.conf && \
+  sed -i "s;#\(Include conf/extra/httpd-default.conf\);\1;" /opt/apache2.2.26/conf/httpd.conf && \
+# DirectoryIndex; index.html precedes index.php
+  sed -i "/\s*DirectoryIndex/s/$/ index.php/" /opt/apache2.2.26/conf/httpd.conf && \
+  sed -i "s/\(ServerTokens \)Full/\1Prod/" /opt/apache2.2.26/conf/extra/httpd-default.conf && \
+  echo "Include /srv/etc/apache.conf" >> /opt/apache2.2.26/conf/httpd.conf && \
+# log
+  mkdir -p -m 777 /srv/www/log/ && \
+  echo 'CustomLog "|/opt/apache2.2.26/bin/rotatelogs /srv/www/log/access.%Y%m%d.log 86400 540" combined' >> /srv/etc/apache.conf && \
+  echo 'ErrorLog "|/opt/apache2.2.26/bin/rotatelogs /srv/www/log/error.%Y%m%d.log 86400 540"' >> /srv/etc/apache.conf && \
 # Create php scripts for check
-  mkdir -p /var/www/html/htdocs && \
-  echo "<?php echo 'hello, php';" > /var/www/html/htdocs/index.php && \
-  echo "<?php phpinfo();" > /var/www/html/htdocs/info.php && \
+  mkdir -p /srv/www/htdocs && \
+  echo "<?php echo 'hello, php';" > /srv/www/htdocs/index.php && \
+  echo "<?php phpinfo();" > /srv/www/htdocs/info.php && \
 #
 # php.ini
 #
-  sed -i 's;^expose_php.*;expose_php = Off;' /etc/php.ini && \
-# error
-  sed -i 's;^display_errors.*;display_errors = On;' /etc/php.ini && \
-  sed -i 's;^display_startup_errors.*;display_startup_errors = On;' /etc/php.ini && \
-# timezone
-  sed -i 's/^;date.timezone.*/date.timezone = GMT/' /etc/php.ini && \
-# memory
-  sed -i 's;^memory_limit.*;memory_limit = 256M;' /etc/php.ini && \
-# composer
-  echo 'curl.cainfo=/root/ca-bundle-curl.crt' >> /etc/php.ini && \
-  echo 'openssl.cafile=/root/ca-bundle-curl.crt' >> /etc/php.ini && \
-# imagick
-  echo 'extension=imagick.so' >> /etc/php.ini && \
-# xdebug
-  echo 'zend_extension=/usr/lib64/php/modules/xdebug.so' >> /etc/php.ini && \
-  echo 'html_errors = on' >> /etc/php.ini && \
-  echo 'xdebug.remote_enable  = on' >> /etc/php.ini && \
-  echo 'xdebug.remote_autostart = 1' >> /etc/php.ini && \
-  echo 'xdebug.remote_connect_back=1' >> /etc/php.ini && \
-  echo 'xdebug.remote_handler = dbgp' >> /etc/php.ini && \
-  echo 'xdebug.idekey = PHPSTORM' >> /etc/php.ini && \
+
+## xdebug
+  echo 'zend_extension = /opt/php-5.5.6/lib/php/extensions/no-debug-non-zts-20121212/xdebug.so' >> /srv/etc/php.ini && \
 # set TERM
   echo export TERM=xterm-256color >> /root/.bashrc && \
 # set timezone
   ln -sf /usr/share/zoneinfo/Japan /etc/localtime && \
 # Delete log files except dot files
-  echo '00 15 * * * find /var/www/html/log -not -regex ".*/\.[^/]*$" -type f -mtime +2 -exec rm -f {} \;' > /root/crontab && \
+  echo '00 15 * * * find /srv/www/log -not -regex ".*/\.[^/]*$" -type f -mtime +2 -exec rm -f {} \;' > /root/crontab && \
   crontab /root/crontab && \
 # mysql
   echo >> /etc/my.cnf && \
@@ -176,4 +168,4 @@ RUN \
   echo 'default-character-set=utf8' >> /etc/my.cnf && \
   sed -i 's;^\[mysqld\];&\ncharacter-set-server=utf8\ncollation-server=utf8_general_ci;' /etc/my.cnf
 
-CMD ["/bin/bash", "-c", "/etc/init.d/crond start && /usr/sbin/httpd -DFOREGROUND"]
+CMD ["/bin/bash", "-c", "/etc/init.d/crond start && /opt/apache2.2.26/bin/httpd -DFOREGROUND"]
