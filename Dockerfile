@@ -104,9 +104,9 @@ RUN \
 RUN \
   mkdir -p /usr/local/src/xdebug && \
   cd /usr/local/src/xdebug && \
-  curl --cacert /root/ca-bundle-curl.crt -L -O http://xdebug.org/files/xdebug-2.2.7.tgz && \
-  tar -xzf xdebug-2.2.7.tgz && \
-  cd xdebug-2.2.7 && \
+  curl --cacert /root/ca-bundle-curl.crt -L -O http://xdebug.org/files/xdebug-2.4.1.tgz && \
+  tar -xzf xdebug-2.4.1.tgz && \
+  cd xdebug-2.4.1 && \
   phpize && \
   ./configure --enable-xdebug && \
   make && \
