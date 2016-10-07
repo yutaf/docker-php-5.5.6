@@ -4,14 +4,15 @@ MAINTAINER yutaf <yutafuji2008@gmail.com>
 
 # yum repos
 # epel; need for libcurl-devel
-RUN yum localinstall http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm -y
+#RUN yum localinstall http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm -y
 # mysql
-RUN yum localinstall https://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm -y
+#RUN yum localinstall https://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm -y
 # ius
-RUN yum localinstall -y http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-13.ius.centos6.noarch.rpm
+#RUN yum localinstall -y http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-13.ius.centos6.noarch.rpm
 
 RUN yum update -y
-RUN yum install -y --enablerepo=epel,mysql56-community,ius \
+#RUN yum install -y --enablerepo=epel,mysql56-community,ius \
+RUN yum install -y  \
 # commands
   git \
 # Apache, php \
