@@ -43,11 +43,11 @@ COPY templates/ca-bundle-curl.crt /root/ca-bundle-curl.crt
 # Apache
 RUN \
   cd /usr/local/src && \
-  curl -L -O http://archive.apache.org/dist/httpd/httpd-2.2.31.tar.gz && \
-  tar xzvf httpd-2.2.31.tar.gz && \
-  cd httpd-2.2.31 && \
+  curl -L -O http://archive.apache.org/dist/httpd/httpd-2.2.26.tar.gz && \
+  tar xzvf httpd-2.2.26.tar.gz && \
+  cd httpd-2.2.26 && \
     ./configure \
-      --prefix=/opt/apache2.2.31 \
+      --prefix=/opt/apache2.2.26 \
       --enable-mods-shared=all \
       --enable-proxy \
       --enable-ssl \
@@ -57,19 +57,19 @@ RUN \
   make && \
   make install && \
   cd && \
-  rm -r /usr/local/src/httpd-2.2.31
+  rm -r /usr/local/src/httpd-2.2.26
 
 # php
 RUN \
   cd /usr/local/src && \
-  curl -L -O http://php.net/distributions/php-5.6.18.tar.gz && \
-  tar xzvf php-5.6.18.tar.gz && \
-  cd php-5.6.18 && \
+  curl -L -O http://php.net/distributions/php-5.5.6.tar.gz && \
+  tar xzvf php-5.5.6.tar.gz && \
+  cd php-5.5.6 && \
   ./configure \
-    --prefix=/opt/php-7.0.8 \
+    --prefix=/opt/php-5.5.6 \
     --with-config-file-path=/srv/php/etc \
     --with-config-file-scan-dir=/srv/php/etc/php.d \
-    --with-apxs2=/opt/apache2.2.29/bin/apxs \
+    --with-apxs2=/opt/apache2.2.26/bin/apxs \
     --with-libdir=lib64 \
     --enable-mbstring \
     --enable-intl \
@@ -98,7 +98,7 @@ RUN \
   make && \
   make install && \
   cd && \
-  rm -r /usr/local/src/php-7.0.8
+  rm -r /usr/local/src/php-5.5.6
 
 # xdebug
 RUN \
