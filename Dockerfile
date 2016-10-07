@@ -1,6 +1,6 @@
-# tag: yutaf/php-5.5.6
+# tag: amanekucompany/ks-php-5.5.6
 FROM centos:6.6
-MAINTAINER yutaf <yutafuji2008@gmail.com>
+MAINTAINER yutaf <fujishiro@amaneku.co.jp>
 
 # yum repos
 # epel; need for libcurl-devel
