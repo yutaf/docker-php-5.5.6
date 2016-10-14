@@ -149,9 +149,9 @@ RUN \
   echo 'CustomLog "|/opt/apache2.2.26/bin/rotatelogs /srv/www/log/access.%Y%m%d.log 86400 540" combined' >> /srv/etc/apache.conf && \
   echo 'ErrorLog "|/opt/apache2.2.26/bin/rotatelogs /srv/www/log/error.%Y%m%d.log 86400 540"' >> /srv/etc/apache.conf && \
 # Create php scripts for check
-  mkdir -p /srv/www/htdocs && \
-  echo "<?php echo 'hello, php';" > /srv/www/htdocs/index.php && \
-  echo "<?php phpinfo();" > /srv/www/htdocs/info.php && \
+  mkdir -p /srv/www/htdocs/https && \
+  echo "<?php echo 'hello, php';" > /srv/www/htdocs/https/index.php && \
+  echo "<?php phpinfo();" > /srv/www/htdocs/https/info.php && \
 #
 # php.ini
 #
