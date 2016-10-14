@@ -33,7 +33,6 @@ RUN yum install -y --enablerepo=epel \
   readline-devel \
   libicu-devel \
   gcc-c++ \
-  readline-devel \
 # mysql
   mysql \
 # cron
@@ -87,8 +86,8 @@ RUN \
     --with-openssl=/usr \
     --with-mcrypt=/usr \
     --with-gd && \
-# For interactive shell
-    --with-readline=/usr \
+# Enable interactive shell
+    --with-readline=/usr && \
 # Mine
 #    --enable-intl \
 #    --with-icu-dir=/usr \
