@@ -73,6 +73,8 @@ RUN \
     --with-apxs2=/opt/apache2.2.26/bin/apxs \
 # This line is necessary for build
     --with-libdir=lib64 \
+# Enable interactive shell
+    --with-readline=/usr \
 # From live server configuration
     --enable-mbstring \
     --enable-mbregex \
@@ -86,15 +88,12 @@ RUN \
     --with-openssl=/usr \
     --with-mcrypt=/usr \
     --with-gd && \
-# Enable interactive shell
-    --with-readline=/usr && \
 # Mine
 #    --enable-intl \
 #    --with-icu-dir=/usr \
 #    --with-gettext=/usr \
 #    --with-pcre-regex=/usr \
 #    --with-pcre-dir=/usr \
-#    --with-readline=/usr \
 #    --with-libxml-dir=/usr/bin/xml2-config \
 #    --with-zlib-dir=/usr \
 #    --with-jpeg-dir=/usr \
