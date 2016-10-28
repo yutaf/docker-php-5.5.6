@@ -138,8 +138,10 @@ RUN \
   sed -i "s;ScriptAlias /cgi-bin;#&;" /opt/apache2.2.26/conf/httpd.conf && \
   sed -i "s;#\(Include conf/extra/httpd-mpm.conf\);\1;" /opt/apache2.2.26/conf/httpd.conf && \
   sed -i "s;#\(Include conf/extra/httpd-default.conf\);\1;" /opt/apache2.2.26/conf/httpd.conf && \
-# DirectoryIndex; index.html precedes index.php
-  sed -i "/\s*DirectoryIndex/s/$/ index.php/" /opt/apache2.2.26/conf/httpd.conf && \
+# DirectoryIndex Order; index.php comes first, then index.html does
+#  sed -i "/\s*DirectoryIndex/s/$/DirectoryIndex index.php index.html/" /opt/apache2.2.26/conf/httpd.conf && \
+# Remove index.html from DirectoryIndex temporarily
+  sed -i "/\s*DirectoryIndex/s/$/DirectoryIndex index.php/" /opt/apache2.2.26/conf/httpd.conf && \
   sed -i "s/\(ServerTokens \)Full/\1Prod/" /opt/apache2.2.26/conf/extra/httpd-default.conf && \
   echo "Include /srv/etc/apache.conf" >> /opt/apache2.2.26/conf/httpd.conf && \
 # log
